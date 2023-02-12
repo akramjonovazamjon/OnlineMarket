@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -68,6 +69,7 @@ public class CategoryController {
      * @param categoryDto CategoryDto
      * @return ApiResponse
      */
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') and hasAuthority('CREATE')")
     @PostMapping()
     public HttpEntity<ApiResponse> addCategory(@Valid @RequestBody CategoryDto categoryDto) {
         ApiResponse categoryAdded = categoryService.addCategory(categoryDto);
@@ -80,6 +82,7 @@ public class CategoryController {
      * @param id INTEGER
      * @return ApiResponse
      */
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @DeleteMapping("/{id}")
     public HttpEntity<ApiResponse> deleteCategory(@PathVariable Integer id) {
         ApiResponse apiResponse = categoryService.deleteCategory(id);
@@ -93,6 +96,7 @@ public class CategoryController {
      * @param categoryDto CategoryDto
      * @return ApiResponse
      */
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') and hasAuthority('UPDATE')")
     @PutMapping("/{id}")
     public HttpEntity<ApiResponse> editCategory(@PathVariable Integer id, @RequestBody CategoryDto categoryDto) {
         ApiResponse apiResponse = categoryService.editCategory(id, categoryDto);

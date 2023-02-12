@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -77,6 +78,7 @@ public class ProductController {
      * @param productDto PRODUCT DTO
      * @return ApiResponse
      */
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') and hasAuthority('CREATE')")
     @PostMapping
     public HttpEntity<ApiResponse> addProduct(@Valid @RequestBody ProductDto productDto) {
         ApiResponse apiResponse = productService.addProduct(productDto);
@@ -89,6 +91,7 @@ public class ProductController {
      * @param id INTEGER
      * @return ApiResponse
      */
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     @DeleteMapping("/{id}")
     public HttpEntity<ApiResponse> deleteProduct(@PathVariable Integer id) {
         ApiResponse apiResponse = productService.deleteProduct(id);
@@ -102,7 +105,8 @@ public class ProductController {
      * @param id             INTEGER
      * @return ApiResponse
      */
-    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') and hasAuthority('UPDATE')")
+    @PatchMapping("/{id}")
     public HttpEntity<ApiResponse> editProduct(@RequestBody ProductEditDto productEditDto, @PathVariable Integer id) {
         ApiResponse apiResponse = productService.editProduct(productEditDto, id);
         return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.OK : HttpStatus.CONFLICT).body(apiResponse);

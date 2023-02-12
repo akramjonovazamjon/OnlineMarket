@@ -57,8 +57,6 @@ public class ProductService {
                 .price(productDto.getPrice())
                 .quantity(productDto.getQuantity())
                 .category(optionalCategory.get())
-                .createdDate(LocalDateTime.now())
-                .updatedDate(LocalDateTime.now())
                 .build();
         productRepository.save(product);
         return new ApiResponse("Product successfully added", true);
@@ -86,7 +84,6 @@ public class ProductService {
         product.setInfo(productDto.getInfo());
         product.setPrice(productDto.getPrice());
         product.setQuantity(productDto.getQuantity());
-        product.setUpdatedDate(LocalDateTime.now());
         productRepository.save(product);
         return new ApiResponse("Product successfully edited", true);
     }

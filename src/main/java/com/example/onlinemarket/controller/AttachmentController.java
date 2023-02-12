@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -52,6 +53,7 @@ public class AttachmentController {
      * @param request   MultipartHttpServletRequest
      * @return ApiResponse
      */
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') and hasAuthority('CREATE')")
     @PostMapping("/{productId}")
     public HttpEntity<ApiResponse> addAttachment(@PathVariable Integer productId, MultipartHttpServletRequest request) {
         ApiResponse apiResponse = attachmentService.addAttachment(request, productId);
@@ -65,6 +67,7 @@ public class AttachmentController {
      * @param request   MultipartHttpServletRequest
      * @return ApiResponse
      */
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') and hasAuthority('UPDATE')")
     @PutMapping("/{productId}")
     public HttpEntity<ApiResponse> editAttachment(@PathVariable Integer productId, MultipartHttpServletRequest request) {
         ApiResponse apiResponse = attachmentService.editAttachment(productId, request);
@@ -77,6 +80,7 @@ public class AttachmentController {
      * @param id INTEGER
      * @return ApiResponse
      */
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') and hasAuthority('DELETE')")
     @DeleteMapping("/{id}")
     public HttpEntity<ApiResponse> deleteAttachmentById(@PathVariable Integer id) {
         ApiResponse apiResponse = attachmentService.deleteAttachmentById(id);

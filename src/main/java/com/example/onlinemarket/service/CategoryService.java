@@ -37,8 +37,6 @@ public class CategoryService {
         }
         Category category = Category.builder()
                 .name(categoryDto.getName())
-                .createdDate(LocalDateTime.now())
-                .updatedDate(LocalDateTime.now())
                 .build();
         categoryRepository.save(category);
         return new ApiResponse("Category successfully added", true);
@@ -67,7 +65,6 @@ public class CategoryService {
 
         Category category = optionalCategory.get();
         category.setName(categoryDto.getName());
-        category.setUpdatedDate(LocalDateTime.now());
         categoryRepository.save(category);
         return new ApiResponse("Category successfully edited", true);
     }
