@@ -1,16 +1,19 @@
 package com.example.onlinemarket.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.example.onlinemarket.controller.vm.ProductVm;
+import com.example.onlinemarket.dto.ProductDto;
+import com.example.onlinemarket.dto.ProductEditDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,10 +41,28 @@ public class Product {
     private Integer createdBy;
     @LastModifiedBy
     private Integer updatedBy;
-    @ManyToOne
+    @ManyToOne@OnDelete(action = OnDeleteAction.CASCADE)
     private Category category;
-    @JsonIgnore
-    @OneToOne(mappedBy = "product", cascade = CascadeType.REMOVE)
-    private Attachment attachment;
+
+    public static Product of(ProductDto dto, Category category){
+        return Product.builder()
+                .name(dto.name())
+                .info(dto.info())
+                .price(dto.price())
+                .quantity(dto.quantity())
+                .category(category)
+                .build();
+    }
+
+    public ProductVm from(){
+        return new ProductVm(id, name, info, price, quantity, createdAt, updatedAt, createdBy, updatedBy, category.getId());
+    }
+
+    public void update(ProductEditDto dto){
+        setName(dto.name());
+        setInfo(dto.info());
+        setPrice(dto.price());
+        setQuantity(dto.quantity());
+    }
 
 }

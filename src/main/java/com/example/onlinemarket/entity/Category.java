@@ -1,5 +1,7 @@
 package com.example.onlinemarket.entity;
 
+import com.example.onlinemarket.controller.vm.CategoryVm;
+import com.example.onlinemarket.dto.CategoryDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,7 +36,14 @@ public class Category {
     private Integer createdBy;
     @LastModifiedBy
     private Integer updatedBy;
-    @JsonIgnore
-    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
-    private List<Product> products;
+
+    public static Category of(CategoryDto dto){
+        return Category.builder()
+                .name(dto.name())
+                .build();
+    }
+
+    public CategoryVm from(){
+        return new CategoryVm(id, name, createdAt, updatedAt, createdBy, updatedBy);
+    }
 }

@@ -1,13 +1,10 @@
 package com.example.onlinemarket.controller;
 
-import com.example.onlinemarket.entity.FavouriteProduct;
+import com.example.onlinemarket.controller.vm.FavouriteProductVm;
+import com.example.onlinemarket.dto.ResponseData;
 import com.example.onlinemarket.entity.Product;
-import com.example.onlinemarket.payload.ApiResponse;
-import com.example.onlinemarket.payload.FavouriteProductDto;
+import com.example.onlinemarket.dto.FavouriteProductDto;
 import com.example.onlinemarket.service.FavouriteProductService;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,50 +18,29 @@ public class FavouriteProductController {
         this.favouriteProductService = favouriteProductService;
     }
 
-    /**
-     * GET USER FAVOURITE PRODUCTS
-     *
-     * @param userId INTEGER
-     * @return LIST
-     */
-    @GetMapping("/{userId}")
-    public HttpEntity<List<Product>> getUserFavouriteProducts(@PathVariable Integer userId) {
-        List<Product> userFavouriteProducts = favouriteProductService.getUserFavouriteProducts(userId);
-        return ResponseEntity.ok(userFavouriteProducts);
+
+    @GetMapping("/user")
+    public ResponseData<List<Product>> getUserFavouriteProducts() {
+        List<Product> userFavouriteProducts = favouriteProductService.getUserFavouriteProducts();
+        return ResponseData.of(userFavouriteProducts);
     }
 
-    /**
-     * ADD USER FAVOURITE PRODUCT
-     *
-     * @param favouriteProductDto FavouriteProductDto
-     * @return ApiResponse
-     */
+
     @PostMapping
-    public HttpEntity<ApiResponse> addFavouriteProduct(@RequestBody FavouriteProductDto favouriteProductDto) {
-        ApiResponse apiResponse = favouriteProductService.addFavouriteProduct(favouriteProductDto);
-        return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.CREATED : HttpStatus.CONFLICT).body(apiResponse);
+    public ResponseData<FavouriteProductVm> create(@RequestBody FavouriteProductDto dto) {
+        FavouriteProductVm favouriteProductVm = favouriteProductService.create(dto);
+        return ResponseData.of(favouriteProductVm);
     }
 
-    /**
-     * DELETE FAVOURITE PRODUCT BY ID
-     *
-     * @param id INTEGER
-     * @return ApiResponse
-     */
+
     @DeleteMapping("/{id}")
-    public HttpEntity<ApiResponse> deleteFavouriteProductById(@PathVariable Integer id) {
-        ApiResponse apiResponse = favouriteProductService.deleteFavouriteProductById(id);
-        return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.OK : HttpStatus.CONFLICT).body(apiResponse);
+    public void deleteFavouriteProductById(@PathVariable Integer id) {
+        favouriteProductService.deleteFavouriteProductById(id);
     }
 
-    /**
-     * DELETE FAVOURITE PRODUCT BY USER_ID AND PRODUCT_ID
-     *
-     * @return ApiResponse
-     */
-    @DeleteMapping("/{userId}/{productId}")
-    public HttpEntity<ApiResponse> deleteFavouriteProductByUserIdAndProductId(@PathVariable Integer productId, @PathVariable Integer userId) {
-        ApiResponse apiResponse = favouriteProductService.deleteFavouriteProductByUserAndProductId(userId, productId);
-        return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.OK : HttpStatus.CONFLICT).body(apiResponse);
+
+    @DeleteMapping("/user/{productId}")
+    public void deleteFavouriteProductByUserIdAndProductId(@PathVariable Integer productId) {
+        favouriteProductService.deleteFavouriteProductByUserAndProductId(productId);
     }
 }

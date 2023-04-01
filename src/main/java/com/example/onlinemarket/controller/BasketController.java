@@ -1,12 +1,9 @@
 package com.example.onlinemarket.controller;
 
+import com.example.onlinemarket.dto.ResponseData;
 import com.example.onlinemarket.entity.Basket;
-import com.example.onlinemarket.payload.ApiResponse;
-import com.example.onlinemarket.payload.BasketDto;
+import com.example.onlinemarket.dto.BasketDto;
 import com.example.onlinemarket.service.BasketService;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,40 +15,22 @@ public class BasketController {
         this.basketService = basketService;
     }
 
-    /**
-     * GET USER BASKET IF BASKET IS NULL THEN USER BASKET IS EMPTY
-     *
-     * @param userId INTEGER
-     * @return BASKET
-     */
     @GetMapping("/{userId}")
-    public HttpEntity<Basket> getUserBasket(@PathVariable Integer userId) {
+    public ResponseData<Basket> getUserBasket(@PathVariable Integer userId) {
         Basket userBasket = basketService.getUserBasket(userId);
-        return ResponseEntity.ok(userBasket);
+        return ResponseData.of(userBasket);
     }
 
-    /**
-     * ADD PRODUCT TO BASKET
-     *
-     * @param basketDto BasketDto
-     * @return ApiResponse
-     */
+
     @PostMapping
-    public HttpEntity<ApiResponse> addToBasket(@RequestBody BasketDto basketDto) {
-        ApiResponse apiResponse = basketService.addToBasket(basketDto);
-        return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.OK : HttpStatus.CONFLICT).body(apiResponse);
+    public ResponseData<Basket> addToBasket(@RequestBody BasketDto dto) {
+        Basket basket = basketService.addToBasket(dto);
+        return ResponseData.of(basket);
     }
 
-    /**
-     * DELETE PRODUCT FROM BASKET
-     *
-     * @param productId INTEGER
-     * @param userId    INTEGER
-     * @return ApiResponse
-     */
+
     @DeleteMapping("/{userId}/{productId}")
-    public HttpEntity<ApiResponse> deleteProductFromBasket(@PathVariable Integer productId, @PathVariable Integer userId) {
-        ApiResponse apiResponse = basketService.deleteProductFromBasket(userId, productId);
-        return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.OK : HttpStatus.CONFLICT).body(apiResponse);
+    public void deleteProductFromBasket(@PathVariable Integer productId, @PathVariable Integer userId) {
+        basketService.deleteProductFromBasket(userId, productId);
     }
 }

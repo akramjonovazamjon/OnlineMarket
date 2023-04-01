@@ -1,71 +1,50 @@
 package com.example.onlinemarket.service;
 
+import com.example.onlinemarket.controller.vm.FavouriteProductVm;
 import com.example.onlinemarket.entity.FavouriteProduct;
 import com.example.onlinemarket.entity.Product;
+import com.example.onlinemarket.dto.FavouriteProductDto;
 import com.example.onlinemarket.entity.User;
-import com.example.onlinemarket.payload.ApiResponse;
-import com.example.onlinemarket.payload.FavouriteProductDto;
+import com.example.onlinemarket.exception.favourite_product.FavouriteProductExistException;
 import com.example.onlinemarket.repository.FavouriteProductRepository;
 import com.example.onlinemarket.repository.ProductRepository;
-import com.example.onlinemarket.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class FavouriteProductService {
     private final FavouriteProductRepository favouriteProductRepository;
     private final ProductRepository productRepository;
 
 
-    public FavouriteProductService(FavouriteProductRepository favouriteProductRepository, ProductRepository productRepository) {
-        this.favouriteProductRepository = favouriteProductRepository;
-        this.productRepository = productRepository;
-    }
-
-    public List<Product> getUserFavouriteProducts(Integer userId) {
+    public List<Product> getUserFavouriteProducts() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<Integer> productsId = favouriteProductRepository
-                .findAllByUserId(userId).stream()
+                .findAllByUserId(user.getId()).stream()
                 .map(FavouriteProduct::getProductId).toList();
         return productRepository.findAllByIdIn(productsId);
     }
 
-    public ApiResponse addFavouriteProduct(FavouriteProductDto favouriteProductDto) {
-        boolean exists = favouriteProductRepository.existsByUserIdAndProductId(favouriteProductDto.getUserId(),
-                favouriteProductDto.getProductId());
+
+    public FavouriteProductVm create(FavouriteProductDto dto) {
+        boolean exists = favouriteProductRepository.existsByUserIdAndProductId(dto.userId(), dto.productId());
         if (exists) {
-            return new ApiResponse("Favourite product exist", false);
+            throw new FavouriteProductExistException();
         }
-        FavouriteProduct favouriteProduct = FavouriteProduct.builder()
-                .userId(favouriteProductDto.getUserId())
-                .productId(favouriteProductDto.getProductId())
-                .build();
-        favouriteProductRepository.save(favouriteProduct);
-        return new ApiResponse("Favourite product added", true);
+        FavouriteProduct favouriteProduct = FavouriteProduct.of(dto);
+        return favouriteProductRepository.save(favouriteProduct).from();
     }
 
-    public ApiResponse deleteFavouriteProductById(Integer id) {
-        try {
-            favouriteProductRepository.deleteById(id);
-            return new ApiResponse("Favourite product deleted", true);
-        } catch (Exception e) {
-            return new ApiResponse("Some error arised", false);
-        }
+    public void deleteFavouriteProductById(Integer id) {
+        favouriteProductRepository.deleteById(id);
     }
 
-    public ApiResponse deleteFavouriteProductByUserAndProductId(Integer userId, Integer productId) {
-        try {
-
-            Optional<FavouriteProduct> optionalFavouriteProduct = favouriteProductRepository.findByProductIdAndUserId(productId, userId);
-            if (optionalFavouriteProduct.isEmpty()) {
-                return new ApiResponse("Some error", false);
-            }
-
-            favouriteProductRepository.deleteById(optionalFavouriteProduct.get().getId());
-            return new ApiResponse("Favourite product deleted", true);
-        } catch (Exception e) {
-            return new ApiResponse("Favourite product not deleted", false);
-        }
+    public void deleteFavouriteProductByUserAndProductId(Integer productId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        favouriteProductRepository.deleteByUserIdAndProductId(user.getId(), productId);
     }
 }

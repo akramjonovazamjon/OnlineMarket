@@ -1,5 +1,6 @@
 package com.example.onlinemarket.entity;
 
+import com.example.onlinemarket.controller.vm.OrderVm;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,4 +18,14 @@ public class Order {
     @OneToOne
     private Basket basket;
     private boolean accepted;
+
+    public static Order of(Basket basket){
+        return Order.builder()
+                .basket(basket)
+                .build();
+    }
+
+    public OrderVm from(){
+        return new OrderVm(id, basket, accepted);
+    }
 }

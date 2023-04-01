@@ -2,6 +2,8 @@ package com.example.onlinemarket.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,6 +18,6 @@ public class Attachment {
     private String fileOriginalName;
     private String contentType;
     private byte[] mainContent;
-    @OneToOne
+    @OneToOne@OnDelete(action = OnDeleteAction.CASCADE)
     private Product product;
 }

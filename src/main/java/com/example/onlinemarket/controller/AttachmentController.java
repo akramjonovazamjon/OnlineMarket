@@ -1,12 +1,10 @@
 package com.example.onlinemarket.controller;
 
+import com.example.onlinemarket.dto.ResponseData;
 import com.example.onlinemarket.entity.Attachment;
-import com.example.onlinemarket.payload.ApiResponse;
 import com.example.onlinemarket.service.AttachmentService;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
@@ -14,25 +12,17 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/attachment")
 public class AttachmentController {
     private final AttachmentService attachmentService;
 
-    public AttachmentController(AttachmentService attachmentService) {
-        this.attachmentService = attachmentService;
-    }
 
-    /**
-     * GET PRODUCT PICTURE
-     *
-     * @param productId INTEGER
-     * @param response  HttpServletResponse
-     */
     @GetMapping("/{productId}")
     public void getAttachmentByProductId(@PathVariable Integer productId, HttpServletResponse response) {
         Attachment attachment = attachmentService.getAttachmentByProductId(productId);
-        if (attachment==null){
+        if (attachment == null) {
             response.setStatus(409);
             return;
         }
@@ -46,44 +36,25 @@ public class AttachmentController {
         }
     }
 
-    /**
-     * ADD PRODUCT PICTURE
-     *
-     * @param productId INTEGER
-     * @param request   MultipartHttpServletRequest
-     * @return ApiResponse
-     */
+
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') and hasAuthority('CREATE')")
     @PostMapping("/{productId}")
-    public HttpEntity<ApiResponse> addAttachment(@PathVariable Integer productId, MultipartHttpServletRequest request) {
-        ApiResponse apiResponse = attachmentService.addAttachment(request, productId);
-        return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.CREATED : HttpStatus.CONFLICT).body(apiResponse);
+    public ResponseData<String > addAttachment(@PathVariable Integer productId, MultipartHttpServletRequest request) {
+        String result = attachmentService.addAttachment(request, productId);
+        return ResponseData.of(result);
     }
 
-    /**
-     * UPDATE PRODUCT PICTURE
-     *
-     * @param productId INTEGER
-     * @param request   MultipartHttpServletRequest
-     * @return ApiResponse
-     */
+
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') and hasAuthority('UPDATE')")
     @PutMapping("/{productId}")
-    public HttpEntity<ApiResponse> editAttachment(@PathVariable Integer productId, MultipartHttpServletRequest request) {
-        ApiResponse apiResponse = attachmentService.editAttachment(productId, request);
-        return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.OK : HttpStatus.CONFLICT).body(apiResponse);
+    public void update(@PathVariable Integer productId, MultipartHttpServletRequest request) {
+        attachmentService.update(productId, request);
     }
 
-    /**
-     * DELETE ATTACHMENT BY ID
-     *
-     * @param id INTEGER
-     * @return ApiResponse
-     */
+
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') and hasAuthority('DELETE')")
     @DeleteMapping("/{id}")
-    public HttpEntity<ApiResponse> deleteAttachmentById(@PathVariable Integer id) {
-        ApiResponse apiResponse = attachmentService.deleteAttachmentById(id);
-        return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.OK : HttpStatus.CONFLICT).body(apiResponse);
+    public void deleteAttachmentById(@PathVariable Integer id) {
+        attachmentService.deleteAttachmentById(id);
     }
 }

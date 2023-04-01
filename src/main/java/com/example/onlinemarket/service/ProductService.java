@@ -1,90 +1,72 @@
 package com.example.onlinemarket.service;
 
-import com.example.onlinemarket.entity.Attachment;
+import com.example.onlinemarket.controller.vm.ProductVm;
 import com.example.onlinemarket.entity.Category;
 import com.example.onlinemarket.entity.Product;
-import com.example.onlinemarket.payload.ApiResponse;
-import com.example.onlinemarket.payload.ProductDto;
-import com.example.onlinemarket.payload.ProductEditDto;
+import com.example.onlinemarket.dto.ProductDto;
+import com.example.onlinemarket.dto.ProductEditDto;
+import com.example.onlinemarket.exception.category.CategoryNotFoundByIdException;
+import com.example.onlinemarket.exception.product.ProductExistByNameException;
+import com.example.onlinemarket.exception.product.ProductNotFoundByIdException;
+import com.example.onlinemarket.exception.product.ProductNotFoundByNameException;
 import com.example.onlinemarket.repository.CategoryRepository;
 import com.example.onlinemarket.repository.ProductRepository;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
-    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository) {
-        this.productRepository = productRepository;
-        this.categoryRepository = categoryRepository;
+    public List<ProductVm> getProducts() {
+        return productRepository.findAll().stream().map(Product::from).toList();
     }
 
-    public List<Product> getProducts() {
-        return productRepository.findAll();
+    public ProductVm getProductById(Integer id) {
+        return productRepository.findById(id).orElseThrow(() -> new ProductNotFoundByIdException(id)).from();
     }
 
-    public Product getProductById(Integer id) {
-        return productRepository.findById(id).orElse(null);
+    public ProductVm getProductByName(String name) {
+        return productRepository.findByNameIgnoreCase(name).orElseThrow(() -> new ProductNotFoundByNameException(name)).from();
     }
 
-    public Product getProductByName(String name) {
-        return productRepository.findByNameIgnoreCase(name).orElse(null);
+    public List<ProductVm> getProductsByCategoryId(Integer categoryId) {
+        return productRepository.findAllByCategoryId(categoryId).stream().map(Product::from).toList();
     }
 
-    public List<Product> getProductsByCategoryId(Integer categoryId) {
-        return productRepository.findAllByCategoryId(categoryId);
-    }
-
-    public ApiResponse addProduct(ProductDto productDto) {
-        boolean existsByName = productRepository.existsByName(productDto.getName());
+    public ProductVm create(ProductDto dto) {
+        boolean existsByName = productRepository.existsByName(dto.name());
         if (existsByName) {
-            return new ApiResponse("This product already exist", false);
+            throw new ProductExistByNameException(dto.name());
         }
-        Optional<Category> optionalCategory = categoryRepository.findById(productDto.getCategoryId());
+        Optional<Category> optionalCategory = categoryRepository.findById(dto.categoryId());
         if (optionalCategory.isEmpty()) {
-            return new ApiResponse("Category not found", false);
+            throw new CategoryNotFoundByIdException(dto.categoryId());
         }
-        Product product = Product.builder()
-                .name(productDto.getName())
-                .info(productDto.getInfo())
-                .price(productDto.getPrice())
-                .quantity(productDto.getQuantity())
-                .category(optionalCategory.get())
-                .build();
-        productRepository.save(product);
-        return new ApiResponse("Product successfully added", true);
+        Product product = Product.of(dto, optionalCategory.get());
+        return productRepository.save(product).from();
     }
 
-    public ApiResponse deleteProduct(Integer id) {
-        try {
-            productRepository.deleteById(id);
-            return new ApiResponse("Product successfully deleted", true);
-        } catch (Exception e) {
-            return new ApiResponse("Product not deleted or not found", false);
-        }
+    public void deleteProduct(Integer id) {
+        productRepository.deleteById(id);
     }
 
-    public ApiResponse editProduct(@Valid ProductEditDto productDto, Integer id) {
+    public void update(@Valid ProductEditDto dto, Integer id) {
         Optional<Product> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isEmpty()) {
-            return new ApiResponse("Product not found", false);
+            throw new ProductNotFoundByIdException(id);
         }
-        if (productRepository.existsByNameAndIdNot(productDto.getName(), id)) {
-            return new ApiResponse("This product already exist", false);
+        if (productRepository.existsByNameAndIdNot(dto.name(), id)) {
+            throw new ProductExistByNameException(dto.name());
         }
         Product product = optionalProduct.get();
-        product.setName(productDto.getName());
-        product.setInfo(productDto.getInfo());
-        product.setPrice(productDto.getPrice());
-        product.setQuantity(productDto.getQuantity());
+        product.update(dto);
         productRepository.save(product);
-        return new ApiResponse("Product successfully edited", true);
     }
 }

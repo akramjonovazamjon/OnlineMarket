@@ -1,13 +1,8 @@
 package com.example.onlinemarket.controller;
 
-import com.example.onlinemarket.payload.AdminRegisterDto;
-import com.example.onlinemarket.payload.ApiResponse;
-import com.example.onlinemarket.payload.UserDto;
-import com.example.onlinemarket.payload.UserLoginDto;
-import com.example.onlinemarket.service.UserService;
+import com.example.onlinemarket.dto.*;
+import com.example.onlinemarket.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,31 +10,31 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthController {
-    private final UserService userService;
+    private final AuthService userService;
 
     @PostMapping("/register")
-    public HttpEntity<?> register(@RequestBody UserDto userDto) {
-        ApiResponse apiResponse = userService.register(userDto);
-        return ResponseEntity.status(apiResponse.isSuccess() ? 201 : 409).body(apiResponse);
+    public ResponseData<String > register(@RequestBody UserDto dto) {
+        String register = userService.register(dto);
+        return ResponseData.of(register);
     }
 
     @GetMapping("/validate")
-    public HttpEntity<?> validateAccount(@RequestParam String email, @RequestParam String emailCode) {
-        ApiResponse apiResponse = userService.validateAccount(email, emailCode);
-        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
+    public ResponseData<TokenResult > validateAccount(@RequestParam String email, @RequestParam String emailCode) {
+        TokenResult result = userService.validateAccount(email, emailCode);
+        return ResponseData.of(result);
     }
 
     @PostMapping("/login")
-    public HttpEntity<?> login(@RequestBody UserLoginDto userLoginDto) {
-        ApiResponse apiResponse = userService.login(userLoginDto);
-        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 409).body(apiResponse);
+    public ResponseData<TokenResult> login(@RequestBody UserLoginDto dto) {
+        TokenResult tokenResult = userService.login(dto);
+        return ResponseData.of(tokenResult);
     }
 
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     @PostMapping("/register/admin")
-    public HttpEntity<?> registerAdmin(@RequestBody AdminRegisterDto adminRegisterDto) {
-        ApiResponse apiResponse = userService.registerAdmin(adminRegisterDto);
-        return ResponseEntity.status(apiResponse.isSuccess() ? 201 : 409).body(apiResponse);
+    public ResponseData<String > registerUserByAdmin(@RequestBody AdminRegisterDto dto) {
+        String result = userService.registerAdmin(dto);
+        return ResponseData.of(result);
     }
 
 }
