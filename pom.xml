@@ -81,7 +81,7 @@
     </dependencies>
 
     <build>
-        <finalName>online-market</finalName>
+        <finalName>i-market</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
