@@ -1,4 +1,4 @@
-name: ci_cd springboot-app
+name: i-market
 
 on:
   push:

@@ -3,8 +3,7 @@ spring.datasource:
   username: myuser
   password: mypassword
 spring.jpa:
-  hibernate.ddl-auto: update
-  defer-datasource-initialization: true
+  hibernate.ddl-auto: create
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
