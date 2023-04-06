@@ -1,9 +1,0 @@
-spring.datasource:
-  url: jdbc:postgresql://db:5432/mydb
-  username: myuser
-  password: mypassword
-spring.jpa:
-  hibernate.ddl-auto: create
-spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
