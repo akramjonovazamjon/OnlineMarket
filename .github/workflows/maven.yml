@@ -37,7 +37,7 @@ jobs:
           image: azamjon123/online-market
           tags: latest
           build-args: |
-            DB_URL=jdbc:postgresql://localhost:5432/mydb
+            DB_URL=jdbc:postgresql://db:5432/mydb
             DB_USERNAME=myuser
             DB_PASSWORD=mypassword
           registry: docker.io
