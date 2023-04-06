@@ -6,9 +6,9 @@ services:
       - 5432:5432
     restart: always
     environment:
-      POSTGRES_DB: mydatabase
+      POSTGRES_DB: mydb
       POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_PASSWORD: mypassword
   web:
     image: azamjon123/online-market
     restart: always
@@ -17,6 +17,6 @@ services:
     depends_on:
       - db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/mydatabase
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/mydb
       SPRING_DATASOURCE_USERNAME: myuser
-      SPRING_DATASOURCE_PASSWORD: mysecretpassword
+      SPRING_DATASOURCE_PASSWORD: mypassword
