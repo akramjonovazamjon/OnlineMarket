@@ -22,6 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+
     private final CategoryRepository categoryRepository;
 
     public List<ProductVm> getProducts() {
