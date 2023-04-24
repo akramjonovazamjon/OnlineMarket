@@ -15,7 +15,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     boolean existsByNameAndIdNot(String name, Integer id);
 
-    List<Product> findAllByCategoryId(Integer category_id);
+    List<Product> findAllByCategoryId(Integer categoryId);
 
     List<Product> findAllByIdIn(Collection<Integer> id);
 

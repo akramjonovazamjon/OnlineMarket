@@ -32,7 +32,7 @@ public class AuthService {
     private final JavaMailSender javaMailSender;
     private final JwtProvider jwtProvider;
 
-    public String  register(UserDto userDto) {
+    public String register(UserDto userDto) {
         boolean existsByEmail = userRepository.existsByEmail(userDto.email());
         if (existsByEmail) {
             throw new UserExistByEmailException(userDto.email());
@@ -84,7 +84,7 @@ public class AuthService {
 
     public String registerAdmin(AdminRegisterDto dto) {
         boolean existsByEmail = userRepository.existsByEmail(dto.email());
-        if (existsByEmail){
+        if (existsByEmail) {
             throw new UserExistByEmailException(dto.email());
         }
         List<Role> roles = roleRepository.findAllByRoleEnumIn(dto.roles());

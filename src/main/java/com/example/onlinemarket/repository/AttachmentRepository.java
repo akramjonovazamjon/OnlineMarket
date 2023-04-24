@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface AttachmentRepository extends JpaRepository<Attachment, Integer> {
-    Optional<Attachment> findByProductId(Integer product_id);
+    Optional<Attachment> findByProductId(Integer productId);
 }
