@@ -45,7 +45,7 @@ public class AuthService {
         return "You are successfully registered. We have sent email to you to activate your account.";
     }
 
-    public Boolean sendEmail(String sendingEmail, String emailCode) {
+    public void sendEmail(String sendingEmail, String emailCode) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("akramjonovazamjon57@gmail.com");
         message.setTo(sendingEmail);
@@ -53,15 +53,11 @@ public class AuthService {
         message.setText("You can activate your profile via this link ⬇️\n" +
                 "http://localhost:8080/api/auth/validate?email=" + sendingEmail + "&emailCode=" + emailCode);
         javaMailSender.send(message);
-        return true;
     }
 
     public TokenResult validateAccount(String sendingEmail, String emailCode) {
-        Optional<User> optionalUser = userRepository.findByEmailAndEmailCode(sendingEmail, emailCode);
-        if (optionalUser.isEmpty()) {
-            throw new UserNotFoundByEmailException(sendingEmail);
-        }
-        User user = optionalUser.get();
+        User user = userRepository.findByEmailAndEmailCode(sendingEmail, emailCode)
+                .orElseThrow(() -> new UserNotFoundByEmailException(sendingEmail));
         user.setEnabled(true);
         user.setEmailCode(null);
         userRepository.save(user);
@@ -70,11 +66,8 @@ public class AuthService {
     }
 
     public TokenResult login(UserLoginDto dto) {
-        Optional<User> optionalUser = userRepository.findByEmail(dto.email());
-        if (optionalUser.isEmpty()) {
-            throw new UserNotFoundByEmailException(dto.email());
-        }
-        User user = optionalUser.get();
+        User user = userRepository.findByEmail(dto.email())
+                .orElseThrow(() -> new UserNotFoundByEmailException(dto.email()));
         if (!passwordEncoder.matches(dto.password(), user.getPassword())) {
             throw new UserPasswordNoMatchesException(dto.password());
         }
@@ -89,7 +82,8 @@ public class AuthService {
         }
         List<Role> roles = roleRepository.findAllByRoleEnumIn(dto.roles());
         List<Permission> permissions = permissionRepository.findAllByPermissionEnumIn(dto.permissions());
-        User user = User.of(new UserDto(dto.firstName(), dto.lastName(), dto.email(), dto.password()), roles, permissions, passwordEncoder);
+        User user = User.of(new UserDto(dto.firstName(), dto.lastName(), dto.email(), dto.password()), roles, permissions,
+                passwordEncoder);
         user.setEnabled(true);
         userRepository.save(user);
         return "User created";

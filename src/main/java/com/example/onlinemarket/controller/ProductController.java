@@ -6,19 +6,16 @@ import com.example.onlinemarket.dto.ProductDto;
 import com.example.onlinemarket.dto.ProductEditDto;
 import com.example.onlinemarket.service.ProductService;
 import jakarta.validation.Valid;
-import org.springframework.security.access.prepost.PreAuthorize;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/product")
 public class ProductController {
     private final ProductService productService;
-
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
 
     @GetMapping
     public ResponseData<List<ProductVm>> getProducts() {
@@ -48,7 +45,6 @@ public class ProductController {
     }
 
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') and hasAuthority('CREATE')")
     @PostMapping
     public ResponseData<ProductVm> addProduct(@Valid @RequestBody ProductDto dto) {
         ProductVm productVm = productService.create(dto);
@@ -56,14 +52,12 @@ public class ProductController {
     }
 
 
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable Integer id) {
         productService.deleteProduct(id);
     }
 
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') and hasAuthority('UPDATE')")
     @PatchMapping("/{id}")
     public void editProduct(@RequestBody ProductEditDto productEditDto, @PathVariable Integer id) {
         productService.update(productEditDto, id);

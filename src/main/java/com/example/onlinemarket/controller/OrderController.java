@@ -5,19 +5,16 @@ import com.example.onlinemarket.dto.ResponseData;
 import com.example.onlinemarket.dto.OrderDto;
 import com.example.onlinemarket.service.OrderService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/order")
 public class OrderController {
     private final OrderService orderService;
-
-    public OrderController(OrderService orderService) {
-        this.orderService = orderService;
-    }
-
 
     @GetMapping("/{id}")
     public ResponseData<OrderVm> getOrderById(@PathVariable Integer id) {

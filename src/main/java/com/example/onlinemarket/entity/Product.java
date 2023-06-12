@@ -57,7 +57,6 @@ public class Product {
     public ProductVm from(){
         return new ProductVm(id, name, info, price, quantity, createdAt, updatedAt, createdBy, updatedBy, category.getId());
     }
-
     public void update(ProductEditDto dto){
         setName(dto.name());
         setInfo(dto.info());

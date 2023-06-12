@@ -6,12 +6,14 @@ import com.example.onlinemarket.entity.Product;
 import com.example.onlinemarket.entity.User;
 import com.example.onlinemarket.dto.BasketDto;
 import com.example.onlinemarket.exception.basket.BasketItemNotFoundException;
+import com.example.onlinemarket.exception.basket.BasketNotFoundException;
 import com.example.onlinemarket.exception.product.ProductNotFoundByIdException;
-import com.example.onlinemarket.exception.user.UserNotFoundByIdException;
+import com.example.onlinemarket.exception.user.UserNotFoundByEmailException;
 import com.example.onlinemarket.repository.BasketItemRepository;
 import com.example.onlinemarket.repository.BasketRepository;
 import com.example.onlinemarket.repository.ProductRepository;
 import com.example.onlinemarket.repository.UserRepository;
+import com.example.onlinemarket.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,66 +30,46 @@ public class BasketService {
 
 
     public Basket getUserBasket(Integer userId) {
-        return basketRepository.findByUserId(userId).orElse(null);
+        return basketRepository.findByUserId(userId).orElseThrow(BasketNotFoundException::new);
     }
 
     public Basket addToBasket(BasketDto dto) {
         Optional<Basket> optionalUserBasket = basketRepository.findByUserId(dto.userId());
         if (optionalUserBasket.isEmpty()) {
-            Optional<Product> optionalProduct = productRepository.findById(dto.productId());
-            Optional<User> optionalUser = userRepository.findById(dto.userId());
-            if (optionalProduct.isEmpty()) {
-                throw new ProductNotFoundByIdException(dto.productId());
-            }
-            if (optionalUser.isEmpty()) {
-                throw new UserNotFoundByIdException(dto.userId());
-            }
-            Product product = optionalProduct.get();
-            BasketItem basketItem = BasketItem.builder()
-                    .productId(product.getId())
-                    .quantity(dto.quantity())
-                    .price(product.getPrice() * dto.quantity())
-                    .build();
-            Basket basket = Basket.builder()
-                    .basketItems(List.of(basketItem))
-                    .totalPrice(basketItem.getPrice())
-                    .user(optionalUser.get())
-                    .build();
+
+            String username = SecurityUtil.username();
+
+            User user = userRepository.findByEmail(username).orElseThrow(() -> new UserNotFoundByEmailException(username));
+
+            Product product = productRepository.findById(dto.productId()).orElseThrow(() -> new ProductNotFoundByIdException(dto.productId()));
+
+            BasketItem basketItem = BasketItem.of(product.getId(), dto.quantity(), product.getPrice() * dto.quantity());
+
+            Basket basket = Basket.of(List.of(basketItem), basketItem.getPrice(), user);
+
             return basketRepository.save(basket);
         }
         return updateBasket(optionalUserBasket.get(), dto);
     }
 
     private Basket updateBasket(Basket basket, BasketDto dto) {
-        Optional<Product> optionalProduct = productRepository.findById(dto.productId());
-        Optional<User> optionalUser = userRepository.findById(dto.userId());
-        if (optionalProduct.isEmpty()) {
-            throw new ProductNotFoundByIdException(dto.productId());
-        }
-        if (optionalUser.isEmpty()) {
-            throw new UserNotFoundByIdException(dto.userId());
-        }
-        Product product = optionalProduct.get();
-        BasketItem basketItem = BasketItem.builder()
-                .productId(product.getId())
-                .quantity(dto.quantity())
-                .price(product.getPrice() * dto.quantity())
-                .build();
+        Product product = productRepository.findById(dto.productId()).orElseThrow(() -> new ProductNotFoundByIdException(dto.productId()));
+        BasketItem basketItem = BasketItem.of(product.getId(), dto.quantity(), product.getPrice() * dto.quantity());
         basket.getBasketItems().add(basketItem);
         basket.setTotalPrice(basket.getTotalPrice() + basketItem.getPrice());
         return basketRepository.save(basket);
     }
 
-    public void deleteProductFromBasket(Integer userId, Integer productId) {
-        Optional<BasketItem> optionalBasketItem = basketItemRepository.findByProductId(productId);
-        if (optionalBasketItem.isEmpty()) {
-            throw new BasketItemNotFoundException();
-        }
-        Optional<Basket> optionalBasket = basketRepository.findByUserId(userId);
+    public void deleteProductFromBasket(Integer productId) {
+        BasketItem basketItem = basketItemRepository.findByProductId(productId).orElseThrow(BasketItemNotFoundException::new);
+
+        String username = SecurityUtil.username();
+
+        Optional<Basket> optionalBasket = basketRepository.findByUserEmail(username);
 
         Basket basket = optionalBasket.get();
-        basket.getBasketItems().remove(optionalBasketItem.get());
-        basket.setTotalPrice(basket.getTotalPrice() - optionalBasketItem.get().getPrice());
+        basket.getBasketItems().remove(basketItem);
+        basket.setTotalPrice(basket.getTotalPrice() - basketItem.getPrice());
         basketRepository.save(basket);
     }
 

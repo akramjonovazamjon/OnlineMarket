@@ -1,7 +1,6 @@
 package com.example.onlinemarket.entity;
 
 import com.example.onlinemarket.dto.UserDto;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

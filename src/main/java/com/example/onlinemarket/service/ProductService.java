@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,11 +45,9 @@ public class ProductService {
         if (existsByName) {
             throw new ProductExistByNameException(dto.name());
         }
-        Optional<Category> optionalCategory = categoryRepository.findById(dto.categoryId());
-        if (optionalCategory.isEmpty()) {
-            throw new CategoryNotFoundByIdException(dto.categoryId());
-        }
-        Product product = Product.of(dto, optionalCategory.get());
+        Category category = categoryRepository.findById(dto.categoryId()).orElseThrow(() -> new CategoryNotFoundByIdException(dto.categoryId()));
+
+        Product product = Product.of(dto, category);
         return productRepository.save(product).from();
     }
 
@@ -59,14 +56,11 @@ public class ProductService {
     }
 
     public void update(@Valid ProductEditDto dto, Integer id) {
-        Optional<Product> optionalProduct = productRepository.findById(id);
-        if (optionalProduct.isEmpty()) {
-            throw new ProductNotFoundByIdException(id);
-        }
+        Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundByIdException(id));
+
         if (productRepository.existsByNameAndIdNot(dto.name(), id)) {
             throw new ProductExistByNameException(dto.name());
         }
-        Product product = optionalProduct.get();
         product.update(dto);
         productRepository.save(product);
     }

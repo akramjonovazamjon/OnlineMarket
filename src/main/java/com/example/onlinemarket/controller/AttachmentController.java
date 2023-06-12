@@ -5,7 +5,6 @@ import com.example.onlinemarket.entity.Attachment;
 import com.example.onlinemarket.service.AttachmentService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -22,10 +21,7 @@ public class AttachmentController {
     @GetMapping("/{productId}")
     public void getAttachmentByProductId(@PathVariable Integer productId, HttpServletResponse response) {
         Attachment attachment = attachmentService.getAttachmentByProductId(productId);
-        if (attachment == null) {
-            response.setStatus(409);
-            return;
-        }
+
         response.setHeader("Content-Disposition",
                 "attachment; filename=\"" + attachment.getFileOriginalName() + "\"");
         response.setContentType(attachment.getContentType());
@@ -37,7 +33,6 @@ public class AttachmentController {
     }
 
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') and hasAuthority('CREATE')")
     @PostMapping("/{productId}")
     public ResponseData<String > addAttachment(@PathVariable Integer productId, MultipartHttpServletRequest request) {
         String result = attachmentService.addAttachment(request, productId);
@@ -45,14 +40,12 @@ public class AttachmentController {
     }
 
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') and hasAuthority('UPDATE')")
     @PutMapping("/{productId}")
     public void update(@PathVariable Integer productId, MultipartHttpServletRequest request) {
         attachmentService.update(productId, request);
     }
 
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') and hasAuthority('DELETE')")
     @DeleteMapping("/{id}")
     public void deleteAttachmentById(@PathVariable Integer id) {
         attachmentService.deleteAttachmentById(id);

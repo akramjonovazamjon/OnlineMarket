@@ -6,7 +6,6 @@ import com.example.onlinemarket.dto.CategoryDto;
 import com.example.onlinemarket.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,7 +38,6 @@ public class CategoryController {
     }
 
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') and hasAuthority('CREATE')")
     @PostMapping()
     public ResponseData<CategoryVm> create(@Valid @RequestBody CategoryDto categoryDto) {
         CategoryVm categoryVm = categoryService.create(categoryDto);
@@ -47,14 +45,12 @@ public class CategoryController {
     }
 
 
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
         categoryService.delete(id);
     }
 
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') and hasAuthority('UPDATE')")
     @PutMapping("/{id}")
     public ResponseData<CategoryVm> update(@PathVariable Integer id, @RequestBody CategoryDto categoryDto) {
         CategoryVm categoryVm = categoryService.update(id, categoryDto);

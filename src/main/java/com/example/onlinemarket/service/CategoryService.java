@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,17 +44,12 @@ public class CategoryService {
 
     public CategoryVm update(Integer id, CategoryDto dto) {
 
-        Optional<Category> optionalCategory = categoryRepository.findById(id);
-        if (optionalCategory.isEmpty()) {
-            throw new CategoryNotFoundByIdException(id);
-        }
-
         boolean existsByNameAndIdNot = categoryRepository.existsByNameAndIdNot(dto.name(), id);
         if (existsByNameAndIdNot) {
             throw new CategoryExistByNameException(dto.name());
         }
 
-        Category category = optionalCategory.get();
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundByIdException(id));
         category.setName(dto.name());
         return categoryRepository.save(category).from();
     }

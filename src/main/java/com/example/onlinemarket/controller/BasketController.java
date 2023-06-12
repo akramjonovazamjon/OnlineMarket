@@ -29,8 +29,8 @@ public class BasketController {
     }
 
 
-    @DeleteMapping("/{userId}/{productId}")
-    public void deleteProductFromBasket(@PathVariable Integer productId, @PathVariable Integer userId) {
-        basketService.deleteProductFromBasket(userId, productId);
+    @DeleteMapping("/{productId}")
+    public void deleteProductFromBasket(@PathVariable Integer productId) {
+        basketService.deleteProductFromBasket(productId);
     }
 }

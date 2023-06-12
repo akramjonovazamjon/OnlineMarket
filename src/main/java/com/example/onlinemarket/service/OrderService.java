@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,11 +29,8 @@ public class OrderService {
     }
 
     public OrderVm addOrder(OrderDto dto) {
-        Optional<Basket> optionalBasket = basketRepository.findById(dto.basketId());
-        if (optionalBasket.isEmpty()) {
-            throw new BasketNotFoundException();
-        }
-        Order order = Order.of(optionalBasket.get());
+        Basket basket = basketRepository.findById(dto.basketId()).orElseThrow(BasketNotFoundException::new);
+        Order order = Order.of(basket);
         return orderRepository.save(order).from();
     }
 
@@ -43,16 +39,11 @@ public class OrderService {
     }
 
     public void updateOrder(Integer id, OrderDto dto) {
-        Optional<Order> optionalOrder = orderRepository.findById(id);
-        if (optionalOrder.isEmpty()) {
-            throw new OrderNotFoundException();
-        }
-        Optional<Basket> optionalBasket = basketRepository.findById(dto.basketId());
-        if (optionalBasket.isEmpty()) {
-            throw new BasketNotFoundException();
-        }
-        Order order = optionalOrder.get();
-        order.setBasket(optionalBasket.get());
+        Order order = orderRepository.findById(id).orElseThrow(OrderNotFoundException::new);
+
+        Basket basket = basketRepository.findById(dto.basketId()).orElseThrow(BasketNotFoundException::new);
+
+        order.setBasket(basket);
         order.setAccepted(dto.accepted());
         orderRepository.save(order);
     }

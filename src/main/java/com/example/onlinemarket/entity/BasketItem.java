@@ -19,4 +19,12 @@ public class BasketItem {
     private Integer quantity;
     @Column(nullable = false)
     private Double price;
+
+    public static BasketItem of(Integer productId, Integer quantity, Double price) {
+        return BasketItem.builder()
+                .productId(productId)
+                .quantity(quantity)
+                .price(price)
+                .build();
+    }
 }

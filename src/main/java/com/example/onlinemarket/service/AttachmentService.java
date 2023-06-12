@@ -23,7 +23,7 @@ public class AttachmentService {
 
 
     public Attachment getAttachmentByProductId(Integer id) {
-        return attachmentRepository.findByProductId(id).orElse(null);
+        return attachmentRepository.findByProductId(id).orElseThrow(AttachmentNotFoundException::new);
     }
 
     public String addAttachment(MultipartHttpServletRequest request, Integer productId) {
@@ -37,13 +37,8 @@ public class AttachmentService {
             if (picture != null) {
                 byte[] mainContent = picture.getBytes();
                 String contentType = picture.getContentType();
-                String originalFilename = picture.getOriginalFilename();
-                Attachment attachment = Attachment.builder()
-                        .contentType(contentType)
-                        .mainContent(mainContent)
-                        .fileOriginalName(originalFilename)
-                        .product(optionalProduct.get())
-                        .build();
+                String originalFileName = picture.getOriginalFilename();
+                Attachment attachment = Attachment.of(contentType, mainContent, originalFileName, optionalProduct.get());
                 attachmentRepository.save(attachment);
                 return "Attachment successfully added";
             }
@@ -54,11 +49,8 @@ public class AttachmentService {
     }
 
     public void update(Integer productId, MultipartHttpServletRequest request) {
-        Optional<Attachment> optionalAttachment = attachmentRepository.findByProductId(productId);
-        if (optionalAttachment.isEmpty()) {
-            throw new AttachmentNotFoundException();
-        }
-        Attachment attachment = optionalAttachment.get();
+
+        Attachment attachment = attachmentRepository.findByProductId(productId).orElseThrow(AttachmentNotFoundException::new);
         Iterator<String> fileNames = request.getFileNames();
         MultipartFile multipartFile = request.getFile(fileNames.next());
         if (multipartFile != null) {
@@ -66,9 +58,7 @@ public class AttachmentService {
             String originalFilename = multipartFile.getOriginalFilename();
             try {
                 byte[] mainContent = multipartFile.getBytes();
-                attachment.setContentType(contentType);
-                attachment.setFileOriginalName(originalFilename);
-                attachment.setMainContent(mainContent);
+                attachment.update(originalFilename, contentType, mainContent);
                 attachmentRepository.save(attachment);
             } catch (IOException e) {
                 e.printStackTrace();

@@ -21,6 +21,15 @@ public class Basket {
     private List<BasketItem> basketItems;
     @Column(nullable = false)
     private Double totalPrice;
-    @OneToOne@OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
+
+    public static Basket of(List<BasketItem> basketItems, Double totalPrice, User user) {
+        return Basket.builder()
+                .basketItems(basketItems)
+                .totalPrice(totalPrice)
+                .user(user)
+                .build();
+    }
 }
