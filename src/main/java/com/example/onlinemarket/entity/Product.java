@@ -41,10 +41,11 @@ public class Product {
     private Integer createdBy;
     @LastModifiedBy
     private Integer updatedBy;
-    @ManyToOne@OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Category category;
 
-    public static Product of(ProductDto dto, Category category){
+    public static Product of(ProductDto dto, Category category) {
         return Product.builder()
                 .name(dto.name())
                 .info(dto.info())
@@ -54,10 +55,11 @@ public class Product {
                 .build();
     }
 
-    public ProductVm from(){
+    public ProductVm from() {
         return new ProductVm(id, name, info, price, quantity, createdAt, updatedAt, createdBy, updatedBy, category.getId());
     }
-    public void update(ProductEditDto dto){
+
+    public void update(ProductEditDto dto) {
         setName(dto.name());
         setInfo(dto.info());
         setPrice(dto.price());

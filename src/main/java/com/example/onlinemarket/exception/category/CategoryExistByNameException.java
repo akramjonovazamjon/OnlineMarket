@@ -3,7 +3,7 @@ package com.example.onlinemarket.exception.category;
 import lombok.Getter;
 
 @Getter
-public class CategoryExistByNameException extends RuntimeException{
+public class CategoryExistByNameException extends RuntimeException {
     private final String name;
 
     public CategoryExistByNameException(String name) {

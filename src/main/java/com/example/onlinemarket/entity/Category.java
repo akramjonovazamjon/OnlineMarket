@@ -34,13 +34,13 @@ public class Category {
     @LastModifiedBy
     private Integer updatedBy;
 
-    public static Category of(CategoryDto dto){
+    public static Category of(CategoryDto dto) {
         return Category.builder()
                 .name(dto.name())
                 .build();
     }
 
-    public CategoryVm from(){
+    public CategoryVm from() {
         return new CategoryVm(id, name, createdAt, updatedAt, createdBy, updatedBy);
     }
 }

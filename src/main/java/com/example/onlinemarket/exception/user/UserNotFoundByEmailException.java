@@ -3,7 +3,7 @@ package com.example.onlinemarket.exception.user;
 import lombok.Getter;
 
 @Getter
-public class UserNotFoundByEmailException extends RuntimeException{
+public class UserNotFoundByEmailException extends RuntimeException {
     private final String email;
 
     public UserNotFoundByEmailException(String email) {

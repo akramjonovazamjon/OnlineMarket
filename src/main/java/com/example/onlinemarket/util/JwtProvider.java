@@ -12,7 +12,7 @@ public class JwtProvider {
     private static final String secretKey = "SoftwareEngineer";
     private static final int expiredTime = 1000 * 60 * 60;// 1 hour
 
-    public String generateToken(String email){
+    public String generateToken(String email) {
         return Jwts
                 .builder()
                 .signWith(SignatureAlgorithm.HS512, secretKey)
@@ -22,7 +22,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String  validateToken(String token){
+    public String validateToken(String token) {
         try {
             return Jwts
                     .parser()
@@ -30,7 +30,7 @@ public class JwtProvider {
                     .parseClaimsJws(token)
                     .getBody()
                     .getSubject();
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }

@@ -13,13 +13,13 @@ public class AuthController {
     private final AuthService userService;
 
     @PostMapping("/register")
-    public ResponseData<String > register(@RequestBody UserDto dto) {
+    public ResponseData<String> register(@RequestBody UserDto dto) {
         String register = userService.register(dto);
         return ResponseData.of(register);
     }
 
     @GetMapping("/validate")
-    public ResponseData<TokenResult > validateAccount(@RequestParam String email, @RequestParam String emailCode) {
+    public ResponseData<TokenResult> validateAccount(@RequestParam String email, @RequestParam String emailCode) {
         TokenResult result = userService.validateAccount(email, emailCode);
         return ResponseData.of(result);
     }
@@ -32,7 +32,7 @@ public class AuthController {
 
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     @PostMapping("/register/admin")
-    public ResponseData<String > registerUserByAdmin(@RequestBody AdminRegisterDto dto) {
+    public ResponseData<String> registerUserByAdmin(@RequestBody AdminRegisterDto dto) {
         String result = userService.registerAdmin(dto);
         return ResponseData.of(result);
     }

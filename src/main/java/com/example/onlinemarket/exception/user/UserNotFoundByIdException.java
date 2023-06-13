@@ -3,7 +3,7 @@ package com.example.onlinemarket.exception.user;
 import lombok.Getter;
 
 @Getter
-public class UserNotFoundByIdException extends RuntimeException{
+public class UserNotFoundByIdException extends RuntimeException {
     private final Integer id;
 
     public UserNotFoundByIdException(Integer id) {

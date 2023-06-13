@@ -11,5 +11,6 @@ import java.util.List;
 @Repository
 public interface PermissionRepository extends JpaRepository<Permission, Integer> {
     Permission findByPermissionEnum(PermissionEnum permissionEnum);
+
     List<Permission> findAllByPermissionEnumIn(Collection<PermissionEnum> permissionEnum);
 }

@@ -3,7 +3,7 @@ package com.example.onlinemarket.exception.product;
 import lombok.Getter;
 
 @Getter
-public class ProductNotFoundByIdException extends RuntimeException{
+public class ProductNotFoundByIdException extends RuntimeException {
     private final Integer id;
 
     public ProductNotFoundByIdException(Integer id) {

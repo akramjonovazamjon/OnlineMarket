@@ -81,7 +81,7 @@ public class User implements UserDetails {
         return this.enabled;
     }
 
-    public static User of(UserDto dto, List<Role> roles, List<Permission> permissions, PasswordEncoder passwordEncoder){
+    public static User of(UserDto dto, List<Role> roles, List<Permission> permissions, PasswordEncoder passwordEncoder) {
         return User.builder()
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())

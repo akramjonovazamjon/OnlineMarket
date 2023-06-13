@@ -34,7 +34,7 @@ public class AttachmentController {
 
 
     @PostMapping("/{productId}")
-    public ResponseData<String > addAttachment(@PathVariable Integer productId, MultipartHttpServletRequest request) {
+    public ResponseData<String> addAttachment(@PathVariable Integer productId, MultipartHttpServletRequest request) {
         String result = attachmentService.addAttachment(request, productId);
         return ResponseData.of(result);
     }

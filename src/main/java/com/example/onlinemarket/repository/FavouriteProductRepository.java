@@ -9,6 +9,8 @@ import java.util.List;
 @Repository
 public interface FavouriteProductRepository extends JpaRepository<FavouriteProduct, Integer> {
     List<FavouriteProduct> findAllByUserId(Integer userId);
+
     boolean existsByUserIdAndProductId(Integer userId, Integer productId);
+
     void deleteByUserIdAndProductId(Integer userId, Integer productId);
 }

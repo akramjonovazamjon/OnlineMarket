@@ -1,6 +1,7 @@
 package com.example.onlinemarket.exception.user;
 
 import lombok.Getter;
+
 @Getter
 public class UserPasswordNoMatchesException extends RuntimeException {
     private final String password;
