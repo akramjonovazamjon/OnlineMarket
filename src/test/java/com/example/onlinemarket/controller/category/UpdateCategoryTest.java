@@ -19,7 +19,7 @@ public class UpdateCategoryTest extends CommonIntegrationTest {
         testDataHelperCategory.createCategoryRequest("TV");
 
 
-        ResultActions resultActions = testDataHelperCategory.updateCategoryRequest("Phone");
+        ResultActions resultActions = testDataHelperCategory.updateCategoryRequest("Phone", 1);
 
         resultActions
                 .andExpect(status().isOk())
@@ -39,7 +39,7 @@ public class UpdateCategoryTest extends CommonIntegrationTest {
         testDataHelperCategory.createCategoryRequest("Car");
 
 
-        ResultActions resultActions = testDataHelperCategory.updateCategoryRequest("Phone");
+        ResultActions resultActions = testDataHelperCategory.updateCategoryRequest("Phone", 1);
 
         resultActions.andExpect(status().isConflict());
 

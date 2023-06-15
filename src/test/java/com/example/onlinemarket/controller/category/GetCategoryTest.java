@@ -35,7 +35,7 @@ public class GetCategoryTest extends CommonIntegrationTest {
 
         testDataHelperCategory.createCategoryRequest("TV");
 
-        ResultActions resultActions = testDataHelperCategory.getCategoryByIdRequest();
+        ResultActions resultActions = testDataHelperCategory.getCategoryByIdRequest(1);
 
         resultActions
                 .andExpect(status().isOk())

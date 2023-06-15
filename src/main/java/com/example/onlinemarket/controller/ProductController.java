@@ -7,13 +7,14 @@ import com.example.onlinemarket.dto.ProductEditDto;
 import com.example.onlinemarket.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/product")
+@RequestMapping("/api/products")
 public class ProductController {
     private final ProductService productService;
 
@@ -45,8 +46,9 @@ public class ProductController {
     }
 
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public ResponseData<ProductVm> addProduct(@Valid @RequestBody ProductDto dto) {
+    public ResponseData<ProductVm> create(@Valid @RequestBody ProductDto dto) {
         ProductVm productVm = productService.create(dto);
         return ResponseData.of(productVm);
     }
@@ -59,8 +61,8 @@ public class ProductController {
 
 
     @PatchMapping("/{id}")
-    public void editProduct(@RequestBody ProductEditDto productEditDto, @PathVariable Integer id) {
-        productService.update(productEditDto, id);
+    public void update(@RequestBody ProductEditDto dto, @PathVariable Integer id) {
+        productService.update(dto, id);
     }
 
 }

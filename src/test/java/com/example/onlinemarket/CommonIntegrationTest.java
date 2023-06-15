@@ -1,6 +1,7 @@
 package com.example.onlinemarket;
 
 import com.example.onlinemarket.controller.category.data.TestDataHelperCategory;
+import com.example.onlinemarket.controller.product.data.TestDataHelperProduct;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public abstract class CommonIntegrationTest {
 
     @Autowired
     public TestDataHelperCategory testDataHelperCategory;
+
+    @Autowired
+    public TestDataHelperProduct testDataHelperProduct;
 
     @Container
     private static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:latest");
