@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "categories")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -9,6 +9,7 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
+@Table(name = "basket_items")
 public class BasketItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

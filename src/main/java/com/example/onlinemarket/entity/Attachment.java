@@ -11,6 +11,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Setter
 @Builder
 @Entity
+@Table(name = "attachments")
 public class Attachment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -11,6 +11,7 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
+@Table(name = "favourite_products")
 public class FavouriteProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

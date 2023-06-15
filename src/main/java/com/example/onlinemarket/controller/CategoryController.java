@@ -6,13 +6,14 @@ import com.example.onlinemarket.dto.CategoryDto;
 import com.example.onlinemarket.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping("/api/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -38,6 +39,7 @@ public class CategoryController {
     }
 
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping()
     public ResponseData<CategoryVm> create(@Valid @RequestBody CategoryDto categoryDto) {
         CategoryVm categoryVm = categoryService.create(categoryDto);
