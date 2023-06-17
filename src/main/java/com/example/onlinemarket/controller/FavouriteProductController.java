@@ -6,13 +6,14 @@ import com.example.onlinemarket.entity.Product;
 import com.example.onlinemarket.dto.FavouriteProductDto;
 import com.example.onlinemarket.service.FavouriteProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/favourite_product")
+@RequestMapping("/api/favourite-products")
 public class FavouriteProductController {
     private final FavouriteProductService favouriteProductService;
 
@@ -23,6 +24,7 @@ public class FavouriteProductController {
     }
 
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ResponseData<FavouriteProductVm> create(@RequestBody FavouriteProductDto dto) {
         FavouriteProductVm favouriteProductVm = favouriteProductService.create(dto);

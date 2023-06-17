@@ -6,6 +6,7 @@ import com.example.onlinemarket.entity.Product;
 import com.example.onlinemarket.dto.FavouriteProductDto;
 import com.example.onlinemarket.entity.User;
 import com.example.onlinemarket.exception.favourite_product.FavouriteProductExistException;
+import com.example.onlinemarket.exception.product.ProductNotFoundByIdException;
 import com.example.onlinemarket.repository.FavouriteProductRepository;
 import com.example.onlinemarket.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +32,16 @@ public class FavouriteProductService {
 
 
     public FavouriteProductVm create(FavouriteProductDto dto) {
-        boolean exists = favouriteProductRepository.existsByUserIdAndProductId(dto.userId(), dto.productId());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        boolean exists = favouriteProductRepository.existsByUserIdAndProductId(user.getId(), dto.productId());
         if (exists) {
             throw new FavouriteProductExistException();
         }
-        FavouriteProduct favouriteProduct = FavouriteProduct.of(dto);
+        boolean existsById = productRepository.existsById(dto.productId());
+        if (!existsById) {
+            throw new ProductNotFoundByIdException(dto.productId());
+        }
+        FavouriteProduct favouriteProduct = FavouriteProduct.of(dto, user.getId());
         return favouriteProductRepository.save(favouriteProduct).from();
     }
 

@@ -1,6 +1,7 @@
 package com.example.onlinemarket;
 
 import com.example.onlinemarket.controller.category.data.TestDataHelperCategory;
+import com.example.onlinemarket.controller.favourite_product.data.TestDataHelperFavouriteProduct;
 import com.example.onlinemarket.controller.product.data.TestDataHelperProduct;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -28,6 +29,8 @@ public abstract class CommonIntegrationTest {
 
     @Autowired
     public TestDataHelperProduct testDataHelperProduct;
+    @Autowired
+    public TestDataHelperFavouriteProduct testDataHelperFavouriteProduct;
 
     @Container
     private static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:latest");

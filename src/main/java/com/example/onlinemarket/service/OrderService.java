@@ -28,7 +28,7 @@ public class OrderService {
         return orderRepository.findAllByAccepted(accepted).stream().map(Order::from).toList();
     }
 
-    public OrderVm addOrder(OrderDto dto) {
+    public OrderVm create(OrderDto dto) {
         Basket basket = basketRepository.findById(dto.basketId()).orElseThrow(BasketNotFoundException::new);
         Order order = Order.of(basket);
         return orderRepository.save(order).from();

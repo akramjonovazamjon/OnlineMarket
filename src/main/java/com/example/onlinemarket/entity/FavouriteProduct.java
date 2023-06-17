@@ -19,9 +19,9 @@ public class FavouriteProduct {
     private Integer userId;
     private Integer productId;
 
-    public static FavouriteProduct of(FavouriteProductDto dto) {
+    public static FavouriteProduct of(FavouriteProductDto dto, Integer userId) {
         return FavouriteProduct.builder()
-                .userId(dto.userId())
+                .userId(userId)
                 .productId(dto.productId())
                 .build();
     }

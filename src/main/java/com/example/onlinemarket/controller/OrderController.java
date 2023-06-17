@@ -31,8 +31,8 @@ public class OrderController {
 
 
     @PostMapping
-    public ResponseData<OrderVm> addOrder(@RequestBody @Valid OrderDto dto) {
-        OrderVm orderVm = orderService.addOrder(dto);
+    public ResponseData<OrderVm> create(@RequestBody @Valid OrderDto dto) {
+        OrderVm orderVm = orderService.create(dto);
         return ResponseData.of(orderVm);
     }
 
